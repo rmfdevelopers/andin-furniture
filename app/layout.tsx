@@ -14,8 +14,8 @@ const body = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Andin Furniture | Bespoke Artistry for the Modern Connoisseur",
-  description: "Led by visionary founder Inneh Samuel, Andin Furniture transforms raw materials into legacy pieces for Nigeria's most discerning homes.",
+  title: "Andin Furniture | The Art of Bespoke Living",
+  description: "Exquisite, custom-made luxury furniture crafted with the precision of a scientist and the soul of an artist.",
 };
 
 export default function RootLayout({
@@ -25,7 +25,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={`${heading.variable} ${body.variable} font-sans`}>
+      <body className={`${heading.variable} ${body.variable} font-sans antialiased`}>
         {children}
       </body>
     </html>
