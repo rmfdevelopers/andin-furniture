@@ -4,20 +4,21 @@ import React, { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
 import { 
   Hammer, 
-  Settings, 
-  Leaf, 
+  Truck, 
+  Ruler, 
   Users, 
-  Package, 
+  PenTool, 
+  Award, 
+  Instagram, 
   Mail, 
   MapPin, 
-  Instagram, 
-  ArrowRight, 
   CheckCheck, 
   Loader2, 
-  ImageOff,
-  Menu,
+  ArrowRight, 
+  ImageOff, 
+  Menu, 
   X,
-  Phone
+  Smartphone
 } from 'lucide-react';
 
 // DESIGN DECISIONS:
@@ -26,9 +27,58 @@ import {
 // Divider Style: D-RULE
 // Typography Personality: refined
 
-// --- Hooks & Utilities ---
+const brand = {
+  name: "Andin Furniture",
+  tagline: "Bespoke Artistry for the Modern Connoisseur",
+  description: "Led by visionary founder Inneh Samuel, Andin Furniture transforms raw materials into legacy pieces, blending scientific precision with clean luxe aesthetics for Nigeria's most discerning homes.",
+  industry: "Furniture",
+  region: "Nigeria",
+  currency: "₦"
+};
 
-const useScrollReveal = (threshold = 0.1) => {
+const IMAGES = {
+  hero: "https://picsum.photos/seed/furniture0/1200/1000",
+  products: [
+    "https://picsum.photos/seed/furniture2/800/1000",
+    "https://picsum.photos/seed/furniture3/800/1000",
+    "https://picsum.photos/seed/furniture4/800/1000",
+    "https://picsum.photos/seed/furniture5/800/1000"
+  ]
+};
+
+const products = [
+  { name: "The Samuel Signature Sofa", description: "A masterpiece of structural integrity and plush comfort, custom-tailored in premium velvet.", price: "₦1,850,000" },
+  { name: "Empire Dining Suite", description: "Ten-seater solid wood table with minimalist black finishes and shocking pink accents.", price: "₦4,200,000" },
+  { name: "Luxe Minimalist Credenza", description: "Hand-carved storage unit featuring geometric patterns and hidden magnetic latches.", price: "₦950,000" },
+  { name: "Bespoke Master Bed Frame", description: "A regal foundation for rest, featuring an oversized headboard and integrated smart lighting.", price: "₦2,100,000" }
+];
+
+const features = [
+  { title: "Bespoke Engineering", description: "Every joint and finish is calculated with the precision of a scientist for lifelong durability.", icon: Hammer },
+  { title: "Nationwide Delivery", description: "Sharp delivery, nationwide. Logistics ensuring your custom pieces arrive in pristine condition.", icon: Truck },
+  { title: "Clean Luxe Aesthetic", description: "A design philosophy that balances bold shocking pink statements with minimalist restraint.", icon: Ruler }
+];
+
+const process = [
+  { number: "01", title: "Consultation", description: "We discuss your space, your style, and your specific functional needs." },
+  { number: "02", title: "Technical Sketching", description: "Our engineers create detailed blueprints incorporating your chosen 'Clean Luxe' details." },
+  { number: "03", title: "Handcrafted Build", description: "Master artisans execute the build using premium hardwoods and luxury finishes." }
+];
+
+const stats = [
+  { number: "3.8k+", label: "Satisfied Clients" },
+  { number: "591", label: "Custom Designs" },
+  { number: "15+", label: "Years Experience" }
+];
+
+const testimonials = [
+  { name: "Olumide Adebayo", text: "The attention to detail is staggering. My dining set isn't just furniture; it's a conversation starter.", role: "Lagos Architect" },
+  { name: "Chidi Okeke", text: "Andin captured exactly what I wanted. The shocking pink accents in my lounge are bold yet classy.", role: "Interior Designer" }
+];
+
+// --- HOOKS ---
+
+const useScrollReveal = (threshold = 0.15) => {
   const ref = useRef<HTMLElement>(null);
   const [isVisible, setIsVisible] = useState(false);
   useEffect(() => {
@@ -42,408 +92,53 @@ const useScrollReveal = (threshold = 0.1) => {
   return { ref, isVisible };
 };
 
-function SafeImage({ src, alt, fill, width, height, className, priority, fallbackClassName }: any) {
+// --- COMPONENTS ---
+
+function SafeImage({ src, alt, fill, width, height, className, priority }: {
+  src: string; alt: string; fill?: boolean; width?: number; height?: number;
+  className?: string; priority?: boolean;
+}) {
   const [error, setError] = useState(false);
   if (error) {
     return (
-      <div className={`flex items-center justify-center bg-zinc-900 ${fallbackClassName ?? className ?? ''}`}>
-        <ImageOff size={28} className="text-white/10" />
+      <div className={`flex items-center justify-center bg-zinc-900 ${className}`}>
+        <ImageOff size={28} className="text-white/20" />
       </div>
     );
   }
   return (
-    <Image 
-      src={src} 
-      alt={alt} 
-      fill={fill}
+    <Image src={src} alt={alt} fill={fill}
       width={!fill ? (width ?? 800) : undefined}
       height={!fill ? (height ?? 600) : undefined}
-      className={className} 
-      priority={priority}
-      onError={() => setError(true)} 
-    />
+      className={className} priority={priority}
+      onError={() => setError(true)} />
   );
 }
 
-// --- Components ---
+function SectionDivider() {
+  return (
+    <div className="py-16 flex items-center gap-8 px-8 max-w-6xl mx-auto">
+      <div className="flex-1 h-px bg-gradient-to-r from-transparent via-[var(--primary)]/40 to-transparent" />
+      <span className="text-[var(--primary)] font-mono text-xs tracking-[0.4em] uppercase whitespace-nowrap opacity-70">
+        {brand.name} Standards
+      </span>
+      <div className="flex-1 h-px bg-gradient-to-r from-transparent via-[var(--primary)]/40 to-transparent" />
+    </div>
+  );
+}
 
-const Navbar = () => {
+export default function LandingPage() {
   const [scrolled, setScrolled] = useState(false);
-  const [mobileOpen, setMobileOpen] = useState(false);
-
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 50);
-    window.addEventListener('scroll', onScroll);
-    return () => window.removeEventListener('scroll', onScroll);
-  }, []);
-
-  const links = [
-    { name: "The Story", href: "#about" },
-    { name: "Collection", href: "#products" },
-    { name: "Showroom", href: "#gallery" },
-    { name: "Enquire", href: "#contact" }
-  ];
-
-  return (
-    <>
-      <nav className={`fixed top-0 left-0 right-0 z-[100] transition-all duration-500 px-6 py-4 ${
-        scrolled ? 'bg-primary/95 backdrop-blur-xl border-b border-white/5 py-3' : 'bg-transparent'
-      }`}>
-        <div className="max-w-7xl mx-auto flex items-center justify-between">
-          <a href="#home" className="group flex items-center gap-2">
-            <div className="bg-accent w-10 h-10 flex items-center justify-center font-heading font-bold text-black text-xl">
-              A
-            </div>
-            <span className="font-heading text-2xl font-bold tracking-tighter text-white">ANDIN</span>
-          </a>
-
-          <div className="hidden md:flex items-center gap-10">
-            {links.map((link) => (
-              <a 
-                key={link.name} 
-                href={link.href} 
-                className="text-xs font-bold uppercase tracking-[0.2em] text-white/70 hover:text-accent transition-colors"
-              >
-                {link.name}
-              </a>
-            ))}
-            <a 
-              href="#contact" 
-              className="bg-accent text-black px-6 py-2.5 font-bold text-xs uppercase tracking-widest hover:brightness-110 transition-all"
-            >
-              Get Started
-            </a>
-          </div>
-
-          <button className="md:hidden text-white" onClick={() => setMobileOpen(true)}>
-            <Menu size={24} />
-          </button>
-        </div>
-      </nav>
-
-      {/* Mobile Sidebar */}
-      <div className={`fixed inset-0 z-[200] transition-transform duration-500 ${mobileOpen ? 'translate-x-0' : 'translate-x-full'}`}>
-        <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setMobileOpen(false)} />
-        <div className="absolute right-0 top-0 h-full w-[85%] max-w-sm bg-primary border-l border-white/10 p-8 flex flex-col">
-          <div className="flex justify-between items-center mb-12">
-            <span className="font-heading text-2xl font-bold text-white">ANDIN</span>
-            <button onClick={() => setMobileOpen(false)}><X className="text-white" /></button>
-          </div>
-          <div className="flex flex-col gap-8">
-            {links.map((link) => (
-              <a 
-                key={link.name} 
-                href={link.href} 
-                onClick={() => setMobileOpen(false)}
-                className="text-3xl font-heading font-medium text-white hover:text-accent"
-              >
-                {link.name}
-              </a>
-            ))}
-          </div>
-          <div className="mt-auto pt-8 border-t border-white/10">
-            <p className="text-white/40 text-xs uppercase tracking-widest mb-4">Get in touch</p>
-            <p className="text-white/70 text-sm">Lagos, Nigeria</p>
-          </div>
-        </div>
-      </div>
-    </>
-  );
-};
-
-const SectionDivider = () => (
-  <div className="py-20 flex items-center gap-8 px-8 max-w-7xl mx-auto opacity-30">
-    <div className="flex-1 h-px bg-gradient-to-r from-transparent via-accent to-transparent" />
-    <div className="w-1.5 h-1.5 rounded-full bg-accent" />
-    <div className="flex-1 h-px bg-gradient-to-r from-transparent via-accent to-transparent" />
-  </div>
-);
-
-// --- Sections ---
-
-const Hero = () => {
-  const { ref, isVisible } = useScrollReveal();
-  
-  return (
-    <section id="home" className="min-h-screen grid md:grid-cols-[1.1fr_0.9fr] items-stretch bg-primary overflow-hidden">
-      <div className="flex flex-col justify-center px-8 md:px-16 pt-32 pb-20 relative z-10">
-        <div className={`transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'}`}>
-          <p className="text-accent font-bold text-sm tracking-[0.4em] uppercase mb-6 flex items-center gap-3">
-            <span className="w-8 h-px bg-accent"></span>
-            Bespoke Luxury
-          </p>
-          <h1 className="font-heading text-6xl md:text-[5.5rem] font-light text-white leading-[0.9] mb-8">
-            Crafting Your <span className="font-bold block">Legacy in Wood</span> & Velvet.
-          </h1>
-          <p className="text-white/40 text-lg max-w-md leading-relaxed mb-12">
-            Luxury is in the details. Discover our 'Clean Luxe' collection of custom-made furniture designed for the discerning few.
-          </p>
-          <div className="flex flex-wrap gap-6 items-center">
-            <a href="#products" className="bg-accent text-black px-10 py-5 font-bold uppercase tracking-widest text-sm hover:translate-y-[-4px] transition-all shadow-[0_10px_30px_rgba(255,20,147,0.2)]">
-              Experience Luxury
-            </a>
-            <a href="#about" className="text-white/60 hover:text-white transition-colors flex items-center gap-3 group font-bold tracking-widest text-xs uppercase">
-              Our Story <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
-            </a>
-          </div>
-          
-          <div className="mt-20 flex gap-12 border-t border-white/5 pt-10">
-            <div>
-              <p className="text-4xl font-heading font-bold text-white">500+</p>
-              <p className="text-white/30 text-[10px] uppercase tracking-widest mt-1">Custom Projects</p>
-            </div>
-            <div>
-              <p className="text-4xl font-heading font-bold text-white">4k+</p>
-              <p className="text-white/30 text-[10px] uppercase tracking-widest mt-1">Happy Clients</p>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div ref={ref} className="relative min-h-[50vh] md:min-h-full">
-        <div className={`absolute inset-0 transition-all duration-1000 ease-out overflow-hidden ${isVisible ? 'max-w-full' : 'max-w-0'}`}>
-          <SafeImage 
-            src="https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?q=80&w=2000" 
-            alt="Luxury Interior" 
-            fill 
-            className="object-cover" 
-            priority 
-          />
-          <div className="absolute inset-0 bg-gradient-to-r from-primary via-primary/20 to-transparent" />
-        </div>
-        <div className="absolute -bottom-10 -left-10 w-40 h-40 bg-accent/20 blur-[60px] rounded-full animate-float" />
-      </div>
-    </section>
-  );
-};
-
-const Gallery = () => {
-  const { ref, isVisible } = useScrollReveal();
-  const images = [
-    "https://picsum.photos/seed/lux1/800/1000",
-    "https://picsum.photos/seed/lux2/800/600",
-    "https://picsum.photos/seed/lux3/800/800",
-    "https://picsum.photos/seed/lux4/800/1100",
-    "https://picsum.photos/seed/lux5/800/600",
-    "https://picsum.photos/seed/lux6/800/900",
-  ];
-
-  return (
-    <section id="gallery" ref={ref} className="py-32 px-6 bg-secondary text-primary">
-      <div className="max-w-7xl mx-auto">
-        <div className="mb-20 text-center">
-          <h2 className="font-heading text-5xl md:text-7xl font-bold mb-4">The Showroom</h2>
-          <p className="text-primary/40 text-lg uppercase tracking-[0.2em]">Excellence curated for life</p>
-        </div>
-        <div className="columns-1 sm:columns-2 lg:columns-3 gap-6 space-y-6">
-          {images.map((src, i) => (
-            <div 
-              key={i} 
-              style={{ transitionDelay: `${i * 150}ms` }}
-              className={`break-inside-avoid relative overflow-hidden rounded-sm group shadow-xl transition-all duration-1000 ${
-                isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
-              }`}
-            >
-              <SafeImage 
-                src={src} 
-                alt={`Gallery piece ${i+1}`} 
-                width={800} 
-                height={1000} 
-                className="w-full h-auto object-cover group-hover:scale-110 transition-transform duration-1000 grayscale group-hover:grayscale-0" 
-              />
-              <div className="absolute inset-0 bg-black/0 group-hover:bg-accent/10 transition-colors duration-500" />
-            </div>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-};
-
-const About = () => {
-  const { ref, isVisible } = useScrollReveal();
-  return (
-    <section id="about" ref={ref} className="py-32 px-6 bg-primary overflow-hidden">
-      <div className="max-w-7xl mx-auto grid md:grid-cols-2 gap-20 items-center">
-        <div className={`relative transition-all duration-1000 ${isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-20'}`}>
-          <div className="aspect-[4/5] relative rounded-sm overflow-hidden z-10 border border-white/10 shadow-2xl">
-            <SafeImage 
-              src="https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?q=80&w=2000" 
-              alt="Artisan working" 
-              fill 
-              className="object-cover" 
-            />
-          </div>
-          <div className="absolute -top-10 -right-10 w-full h-full border border-accent/20 -z-10 translate-x-4 translate-y-4" />
-          <div className="absolute bottom-10 -left-10 bg-accent text-black p-8 z-20 max-w-xs shadow-2xl">
-            <p className="font-heading text-2xl font-bold leading-tight">"Furniture is a statement of identity."</p>
-          </div>
-        </div>
-        
-        <div className={`transition-all duration-1000 delay-300 ${isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-20'}`}>
-          <p className="text-accent font-bold text-xs tracking-[0.4em] uppercase mb-6">Our Legacy</p>
-          <h2 className="font-heading text-5xl md:text-6xl font-light mb-8">From Soil Scientist to <span className="font-bold">Furniture King</span></h2>
-          <div className="space-y-6 text-white/50 text-lg leading-relaxed">
-            <p>
-              Founded by Inneh Samuel, Andin Furniture represents a journey of passion and precision. What started as a vision has grown into Lagos's premier atelier for custom furniture production.
-            </p>
-            <p>
-              We believe that furniture is not just functional; it is a commitment to excellence. Each joint, each stitch, and each finish is a testament to our relentless pursuit of perfection.
-            </p>
-          </div>
-          <div className="mt-12 flex items-center gap-10">
-            <div className="flex -space-x-3">
-              {[1,2,3,4].map(n => (
-                <div key={n} className="w-12 h-12 rounded-full border-2 border-primary bg-zinc-800 flex items-center justify-center text-[10px] text-white/40">
-                  {n}
-                </div>
-              ))}
-            </div>
-            <p className="text-white/40 text-sm italic">Trusted by elite designers across Nigeria.</p>
-          </div>
-        </div>
-      </div>
-    </section>
-  );
-};
-
-const Products = () => {
-  const { ref, isVisible } = useScrollReveal();
-  const items = [
-    { name: "The Royal Wingback", desc: "Hand-tufted velvet armchair with artisanal mahogany legs.", price: "₦450,000", img: "https://picsum.photos/seed/luxprod1/800/1000" },
-    { name: "Obsidian Dining Suite", desc: "A 10-seater custom mahogany masterpiece with a matte finish.", price: "₦3,500,000", img: "https://picsum.photos/seed/luxprod2/800/1000" },
-    { name: "Minimalist Slate Lounge", desc: "High-density modular sofa system in premium Italian linen.", price: "₦1,850,000", img: "https://picsum.photos/seed/luxprod3/800/1000" },
-    { name: "Bespoke Executive Desk", desc: "Custom glass and gold-leaf finish workspace.", price: "₦950,000", img: "https://picsum.photos/seed/luxprod4/800/1000" },
-  ];
-
-  return (
-    <section id="products" ref={ref} className="py-32 px-6 bg-secondary text-primary">
-      <div className="max-w-7xl mx-auto">
-        <div className="flex flex-col md:flex-row md:items-end justify-between mb-20 gap-8">
-          <div>
-            <p className="text-accent font-bold text-xs tracking-[0.4em] uppercase mb-4">Curated Pieces</p>
-            <h2 className="font-heading text-6xl md:text-7xl font-bold">The Collection</h2>
-          </div>
-          <p className="max-w-xs text-primary/40 font-medium text-right leading-relaxed">
-            Signature pieces that define modern minimalist luxury. Sharp delivery, nationwide.
-          </p>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-x-6 gap-y-12">
-          {items.map((p, i) => (
-            <div 
-              key={i} 
-              style={{ transitionDelay: `${i * 120}ms` }}
-              className={`group transition-all duration-700 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
-            >
-              <div className="aspect-[3/4] relative overflow-hidden mb-6 rounded-sm bg-zinc-200">
-                <SafeImage 
-                  src={p.img} 
-                  alt={p.name} 
-                  fill 
-                  className="object-cover group-hover:scale-110 transition-transform duration-1000" 
-                />
-                <div className="absolute inset-0 bg-primary/0 group-hover:bg-primary/20 transition-all duration-500" />
-                <a 
-                  href="#contact" 
-                  className="absolute bottom-6 left-1/2 -translate-x-1/2 bg-white text-black px-6 py-3 font-bold text-[10px] uppercase tracking-widest opacity-0 translate-y-4 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300"
-                >
-                  Request Quote
-                </a>
-              </div>
-              <h3 className="font-heading text-2xl font-bold mb-2 group-hover:text-accent transition-colors">{p.name}</h3>
-              <p className="text-primary/50 text-sm mb-4 line-clamp-2 leading-relaxed">{p.desc}</p>
-              <p className="text-xl font-bold tracking-tighter">{p.price}</p>
-            </div>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-};
-
-const Features = () => {
-  const { ref, isVisible } = useScrollReveal();
-  const features = [
-    { title: "Master Craftsmanship", desc: "Every piece is hand-built by seasoned artisans with decades of furniture-making heritage.", icon: Hammer },
-    { title: "Custom Tailoring", desc: "We don't just build furniture; we curate pieces designed specifically for your space and lifestyle.", icon: Settings },
-    { title: "Ethical Sourcing", desc: "Our timber is sourced from sustainable forests, ensuring luxury that respects the earth.", icon: Leaf },
-  ];
-
-  return (
-    <section ref={ref} className="py-32 px-6 bg-primary text-white overflow-hidden">
-      <div className="max-w-7xl mx-auto">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
-          {features.map((f, i) => (
-            <div 
-              key={i} 
-              className={`p-12 border border-white/5 bg-zinc-900/50 hover:bg-zinc-900 transition-all duration-500 group relative ${
-                isVisible ? 'scale-100 opacity-100' : 'scale-90 opacity-0'
-              }`}
-              style={{ transitionDelay: `${i * 150}ms` }}
-            >
-              <div className="w-16 h-16 bg-accent/10 border border-accent/20 flex items-center justify-center mb-8 group-hover:bg-accent group-hover:text-black transition-all duration-500">
-                <f.icon size={28} strokeWidth={1.5} />
-              </div>
-              <h3 className="font-heading text-3xl font-bold mb-4">{f.title}</h3>
-              <p className="text-white/40 leading-relaxed">{f.desc}</p>
-              <div className="absolute top-0 right-0 p-8 text-white/5 font-heading text-7xl font-bold italic">0{i+1}</div>
-            </div>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-};
-
-const Testimonials = () => {
-  const { ref, isVisible } = useScrollReveal();
-  const items = [
-    { name: "Adeola Balogun", text: "The attention to detail is simply unmatched in Nigeria. My dining suite is the talk of every dinner party.", role: "Interior Designer" },
-    { name: "Chidi Okoro", text: "True custom luxury. They understood my vision and brought it to life with incredible precision.", role: "CEO, TechHaus" }
-  ];
-
-  return (
-    <section ref={ref} className="py-32 bg-accent/5 px-6 border-y border-accent/10">
-      <div className="max-w-4xl mx-auto">
-        <div className="text-center mb-16">
-          <p className="text-accent font-bold text-xs tracking-[0.4em] uppercase mb-4">Elite Circle</p>
-          <h2 className="font-heading text-5xl md:text-6xl font-bold">Voices of Luxury</h2>
-        </div>
-        <div className="space-y-8">
-          {items.map((t, i) => (
-            <div 
-              key={i} 
-              style={{ transitionDelay: `${i * 150}ms` }}
-              className={`bg-primary p-12 rounded-sm border border-white/5 shadow-2xl relative transition-all duration-700 ${
-                isVisible ? 'opacity-100 translate-y-0 blur-0' : 'opacity-0 translate-y-6 blur-sm'
-              }`}
-            >
-              <span className="text-accent/20 text-8xl font-serif absolute top-4 left-4 leading-none select-none">“</span>
-              <p className="text-xl md:text-2xl text-white/80 leading-relaxed italic relative z-10 mb-10">
-                {t.text}
-              </p>
-              <div className="flex items-center gap-6 border-t border-white/5 pt-8">
-                <div className="w-14 h-14 bg-accent flex items-center justify-center font-heading text-black font-bold text-2xl">
-                  {t.name.charAt(0)}
-                </div>
-                <div>
-                  <p className="font-heading text-xl font-bold text-white">{t.name}</p>
-                  <p className="text-accent/60 text-xs uppercase tracking-widest mt-1 font-bold">{t.role}</p>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-};
-
-const Contact = () => {
-  const { ref, isVisible } = useScrollReveal();
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [form, setForm] = useState({ name: '', email: '', phone: '', message: '' });
   const [sent, setSent] = useState(false);
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 60);
+    window.addEventListener('scroll', onScroll);
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -451,130 +146,306 @@ const Contact = () => {
     setTimeout(() => { setLoading(false); setSent(true); }, 1500);
   };
 
-  return (
-    <section id="contact" ref={ref} className="relative overflow-hidden min-h-screen flex items-center">
-      <div className="absolute inset-0 bg-accent" />
-      <div className="absolute inset-0 bg-primary [clip-path:polygon(0_0,60%_0,45%_100%,0_100%)] hidden md:block" />
-      
-      <div className="relative z-10 max-w-7xl mx-auto px-6 w-full py-32 grid md:grid-cols-2 gap-20 items-center">
-        <div className={`transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'}`}>
-          <p className="text-accent font-bold text-xs tracking-[0.4em] uppercase mb-6">Inquiry</p>
-          <h2 className="font-heading text-6xl md:text-[5rem] font-bold text-white leading-none mb-8">
-            Begin Your <br/><span className="text-white/30 md:text-accent">Custom Journey</span>
-          </h2>
-          <div className="space-y-6 mt-12 text-white/60">
-            <div className="flex items-center gap-4">
-              <MapPin className="text-accent" size={20} />
-              <span>Lagos, Nigeria</span>
-            </div>
-            <div className="flex items-center gap-4">
-              <Instagram className="text-accent" size={20} />
-              <span>@andin_furniture</span>
-            </div>
-          </div>
-        </div>
+  const heroReveal = useScrollReveal();
+  const aboutReveal = useScrollReveal();
+  const processReveal = useScrollReveal();
+  const productsReveal = useScrollReveal();
+  const featuresReveal = useScrollReveal();
+  const testimonialReveal = useScrollReveal();
+  const contactReveal = useScrollReveal();
 
-        <div className="w-full max-w-md ml-auto">
-          {sent ? (
-            <div className="bg-zinc-950 p-12 border border-accent/30 text-center animate-scaleIn">
-              <div className="w-20 h-20 bg-accent/20 rounded-full flex items-center justify-center mx-auto mb-8 border border-accent/40">
-                <CheckCheck size={40} className="text-accent" />
-              </div>
-              <h3 className="font-heading text-3xl font-bold text-white mb-4">Request Sent</h3>
-              <p className="text-white/40 leading-relaxed">Our concierge will contact you within 24 hours to discuss your masterpiece.</p>
-            </div>
-          ) : (
-            <form onSubmit={handleSubmit} className="bg-zinc-950 p-8 md:p-12 border border-white/10 shadow-3xl">
-              <h3 className="font-heading text-2xl font-bold text-white mb-8">The Studio Intake</h3>
-              <div className="space-y-5">
-                {['name', 'email', 'phone'].map(field => (
-                  <input
-                    key={field}
-                    type={field === 'email' ? 'email' : 'text'}
-                    placeholder={field.toUpperCase()}
-                    required={field !== 'phone'}
-                    value={(form as any)[field]}
-                    onChange={e => setForm(prev => ({ ...prev, [field]: e.target.value }))}
-                    className="w-full bg-zinc-900 border border-white/5 p-4 text-white text-xs tracking-widest placeholder-white/20 outline-none focus:border-accent transition-colors"
-                  />
-                ))}
-                <textarea
-                  placeholder="PROJECT DETAILS"
-                  rows={4}
-                  required
-                  value={form.message}
-                  onChange={e => setForm(prev => ({ ...prev, message: e.target.value }))}
-                  className="w-full bg-zinc-900 border border-white/5 p-4 text-white text-xs tracking-widest placeholder-white/20 outline-none focus:border-accent transition-colors resize-none"
-                />
-              </div>
-              <button 
-                type="submit" 
-                disabled={loading}
-                className="w-full mt-8 bg-accent text-black py-5 font-bold text-xs uppercase tracking-[0.3em] hover:brightness-110 transition-all flex justify-center items-center gap-4 group"
-              >
-                {loading ? <Loader2 className="animate-spin" /> : <>Send Inquiry <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" /></>}
-              </button>
-            </form>
-          )}
-        </div>
-      </div>
-    </section>
-  );
-};
-
-const Footer = () => (
-  <footer className="bg-primary pt-24 pb-12 px-6 border-t border-white/5">
-    <div className="max-w-7xl mx-auto">
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-16 mb-24">
-        <div className="md:col-span-2">
-          <div className="flex items-center gap-3 mb-8">
-            <div className="bg-accent w-10 h-10 flex items-center justify-center font-heading font-bold text-black text-xl">A</div>
-            <span className="font-heading text-3xl font-bold text-white tracking-tighter uppercase">Andin</span>
-          </div>
-          <p className="text-white/40 text-lg max-w-sm leading-relaxed">
-            Premium high-end furniture production company specializing in custom-made pieces that transform spaces into masterpieces.
-          </p>
-        </div>
-        <div>
-          <h4 className="text-white font-bold text-xs uppercase tracking-[0.3em] mb-8">Navigation</h4>
-          <ul className="space-y-4">
-            {['The Story', 'Collection', 'Showroom', 'Enquire'].map(link => (
-              <li key={link}><a href={`#${link.toLowerCase()}`} className="text-white/40 hover:text-accent transition-colors text-sm">{link}</a></li>
-            ))}
-          </ul>
-        </div>
-        <div>
-          <h4 className="text-white font-bold text-xs uppercase tracking-[0.3em] mb-8">Contact</h4>
-          <p className="text-white/40 text-sm mb-4 leading-relaxed">Lagos, Nigeria</p>
-          <p className="text-white/40 text-sm">andin_furniture</p>
-        </div>
-      </div>
-      <div className="flex flex-col md:flex-row justify-between items-center gap-8 pt-12 border-t border-white/5">
-        <p className="text-white/20 text-[10px] uppercase tracking-[0.4em]">
-          &copy; {new Date().getFullYear()} Andin Furniture Atelier.
-        </p>
-        <div className="flex gap-8">
-          <a href="#" className="text-white/20 hover:text-accent transition-all"><Instagram size={20} /></a>
-        </div>
-      </div>
-    </div>
-  </footer>
-);
-
-export default function Home() {
   return (
     <main className="relative">
-      <Navbar />
-      <Hero />
-      <Gallery />
+      {/* --- HEADER --- */}
+      <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${scrolled ? 'bg-black/90 backdrop-blur-lg py-4 border-b border-white/5' : 'bg-transparent py-8'}`}>
+        <nav className="max-w-7xl mx-auto px-6 flex items-center justify-between">
+          <a href="#" className="flex items-center gap-2">
+            <div className="w-10 h-10 bg-[var(--primary)] flex items-center justify-center font-heading text-2xl font-black text-black">A</div>
+            <span className="font-heading text-xl font-bold tracking-tight hidden sm:block">ANDIN</span>
+          </a>
+
+          <div className="hidden md:flex items-center gap-10">
+            {['Home', 'Our Craft', 'Collections'].map((item) => (
+              <a key={item} href={`#${item.toLowerCase().replace(' ', '')}`} className="text-sm font-medium text-white/70 hover:text-[var(--primary)] transition-colors uppercase tracking-widest">
+                {item}
+              </a>
+            ))}
+            <a href="#contact" className="bg-[var(--primary)] text-black px-6 py-2.5 rounded-full font-bold text-sm hover:scale-105 transition-transform">
+              Start Project
+            </a>
+          </div>
+
+          <button className="md:hidden text-white" onClick={() => setMobileMenuOpen(true)}>
+            <Menu size={28} />
+          </button>
+        </nav>
+      </header>
+
+      {/* --- MOBILE NAV --- */}
+      <div className={`fixed inset-0 z-[60] transition-all duration-500 ${mobileMenuOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}>
+        <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setMobileMenuOpen(false)} />
+        <div className={`absolute right-0 top-0 h-full w-[80%] max-w-sm bg-[var(--secondary)] p-8 transition-transform duration-500 ${mobileMenuOpen ? 'translate-x-0' : 'translate-x-full'}`}>
+          <div className="flex justify-between items-center mb-12">
+            <div className="w-10 h-10 bg-[var(--primary)] flex items-center justify-center font-heading text-2xl font-black text-black">A</div>
+            <button onClick={() => setMobileMenuOpen(false)}><X size={32} /></button>
+          </div>
+          <div className="space-y-8">
+            {['Home', 'Our Craft', 'Collections', 'Start Project'].map((item) => (
+              <a key={item} href={`#${item.toLowerCase().replace(' ', '')}`} 
+                onClick={() => setMobileMenuOpen(false)}
+                className="block text-3xl font-heading font-bold text-white hover:text-[var(--primary)]">
+                {item}
+              </a>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* --- HERO (HR-C Variant) --- */}
+      <section id="home" className="min-h-screen grid md:grid-cols-[1fr_1fr] items-stretch bg-[var(--secondary)] overflow-hidden">
+        <div className={`flex flex-col justify-center px-8 md:px-16 py-32 transition-all duration-1000 ${heroReveal.isVisible ? 'opacity-100 skew-y-0 translate-y-0' : 'opacity-0 skew-y-1 translate-y-10'}`} ref={heroReveal.ref}>
+          <p className="text-[var(--primary)] font-mono text-xs tracking-[0.4em] uppercase mb-6 opacity-70">
+            {brand.industry} • Nigeria
+          </p>
+          <h1 className="font-heading text-5xl md:text-[5.5rem] font-bold text-white leading-[0.95]">
+            From Science to <span className="text-[var(--primary)]">Soulful</span> Spaces
+          </h1>
+          <p className="text-white/45 mt-8 text-xl max-w-md leading-relaxed">
+            Luxury custom-made furniture that redefines the Nigerian interior landscape with surgical precision.
+          </p>
+          <div className="flex gap-4 mt-12 flex-wrap">
+            <a href="#contact" className="bg-[var(--primary)] text-black px-10 py-4 font-bold text-lg hover:scale-105 transition-all duration-300 rounded-full">
+              Begin Your Commission
+            </a>
+          </div>
+        </div>
+        <div className="relative min-h-[50vh] md:min-h-full">
+          <SafeImage src={IMAGES.hero} alt="Andin Furniture Concept" fill className="object-cover" priority />
+          <div className="absolute inset-0 bg-gradient-to-r from-[var(--secondary)] via-[var(--secondary)]/20 to-transparent" />
+        </div>
+      </section>
+
+      {/* --- ABOUT (V3 Reveal) --- */}
+      <section id="ourcraft" ref={aboutReveal.ref} className="py-32 px-6 bg-[var(--secondary)] relative overflow-hidden">
+        <div className="max-w-7xl mx-auto grid md:grid-cols-2 gap-20 items-center">
+          <div className={`transition-all duration-1000 ${aboutReveal.isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-20'}`}>
+            <h2 className="font-heading text-6xl font-bold text-white mb-8">The Andin Legacy</h2>
+            <p className="text-white/60 text-xl leading-relaxed mb-10">
+              Founded by Inneh Samuel—who traded soil science for the art of the grain—Andin Furniture is a testament to the power of transformation. We don't just build furniture; we engineer comfort and style into every fiber of your home.
+            </p>
+            <div className="grid grid-cols-2 gap-8">
+              {stats.map((s, i) => (
+                <div key={i} className="border-l-2 border-[var(--primary)]/30 pl-6">
+                  <p className="text-4xl font-heading font-bold text-white">{s.number}</p>
+                  <p className="text-white/40 text-sm uppercase tracking-widest mt-1">{s.label}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+          <div className={`relative aspect-square transition-all duration-1000 delay-300 ${aboutReveal.isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-20'}`}>
+            <div className="absolute inset-0 border-[10px] border-[var(--primary)] translate-x-4 translate-y-4" />
+            <div className="relative h-full w-full overflow-hidden">
+              <SafeImage src={IMAGES.products[1]} alt="The Craft" fill className="object-cover" />
+            </div>
+          </div>
+        </div>
+      </section>
+
       <SectionDivider />
-      <About />
-      <Products />
-      <SectionDivider />
-      <Features />
-      <Testimonials />
-      <Contact />
-      <Footer />
+
+      {/* --- PROCESS (V9 Counter Rise) --- */}
+      <section id="process" ref={processReveal.ref} className="py-32 px-6 bg-white/[0.03]">
+        <div className="max-w-5xl mx-auto">
+          <div className="mb-20 text-center">
+            <h2 className="font-heading text-6xl font-bold text-white mb-4">The Path to Perfection</h2>
+            <p className="text-white/40 text-lg">How we bring your custom vision to life.</p>
+          </div>
+          <div className="space-y-24">
+            {process.map((step, i) => (
+              <div key={i} className={`flex flex-col md:flex-row items-center gap-12 transition-all duration-1000 ${processReveal.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'}`} style={{ transitionDelay: `${i * 200}ms` }}>
+                <div className="shrink-0">
+                   <span className="font-heading text-[10rem] leading-none font-black text-white/5">{step.number}</span>
+                </div>
+                <div className="md:-ml-12 pt-10">
+                  <h3 className="font-heading text-4xl font-bold text-white mb-4">{step.title}</h3>
+                  <p className="text-white/50 text-xl leading-relaxed max-w-2xl">{step.description}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* --- PRODUCTS (V2 Scale Reveal) --- */}
+      <section id="collections" ref={productsReveal.ref} className="py-32 px-6 bg-[var(--secondary)]">
+        <div className="max-w-7xl mx-auto">
+          <div className="flex flex-col md:flex-row items-end justify-between mb-16 gap-6">
+            <div>
+              <h2 className="font-heading text-6xl font-bold text-white">The Collection</h2>
+              <p className="text-white/40 text-lg mt-2">Limited editions and signature concepts.</p>
+            </div>
+            <a href="#contact" className="text-[var(--primary)] font-bold text-sm border-b-2 border-[var(--primary)] pb-1">VIEW ALL PIECES</a>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            {products.map((p, i) => (
+              <div key={i} className={`group transition-all duration-700 ease-out ${productsReveal.isVisible ? 'scale-100 opacity-100' : 'scale-90 opacity-0'}`} style={{ transitionDelay: `${i * 150}ms` }}>
+                <div className="relative aspect-[3/4] overflow-hidden mb-6 bg-zinc-900">
+                  <SafeImage src={IMAGES.products[i] || IMAGES.hero} alt={p.name} fill className="object-cover group-hover:scale-110 transition-transform duration-700" />
+                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-colors duration-500" />
+                  <div className="absolute bottom-4 left-4 right-4 translate-y-10 group-hover:translate-y-0 opacity-0 group-hover:opacity-100 transition-all duration-500">
+                    <button className="w-full bg-white text-black py-3 font-bold text-sm uppercase tracking-widest">Enquire Now</button>
+                  </div>
+                </div>
+                <h3 className="font-heading text-2xl font-bold text-white mb-2">{p.name}</h3>
+                <p className="text-white/40 text-sm mb-4 line-clamp-2">{p.description}</p>
+                <p className="text-[var(--primary)] font-bold text-xl">{p.price}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* --- FEATURES (V4 Staggered Bento) --- */}
+      <section ref={featuresReveal.ref} className="py-32 px-6 bg-white/[0.02]">
+        <div className="max-w-7xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {features.map((f, i) => (
+              <div key={i} 
+                style={{ transitionDelay: `${i * 120}ms` }}
+                className={`p-10 border border-white/5 bg-white/5 rounded-2xl hover:border-[var(--primary)]/30 transition-all duration-500 group ${featuresReveal.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
+                <div className="w-14 h-14 bg-[var(--primary)]/10 flex items-center justify-center rounded-xl mb-8 group-hover:bg-[var(--primary)] transition-colors duration-500">
+                  <f.icon className="text-[var(--primary)] group-hover:text-black transition-colors" size={28} />
+                </div>
+                <h3 className="font-heading text-3xl font-bold text-white mb-4">{f.title}</h3>
+                <p className="text-white/50 leading-relaxed text-lg">{f.description}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* --- TESTIMONIALS (V7 Blur Cascade) --- */}
+      <section ref={testimonialReveal.ref} className="py-32 px-6 bg-[var(--secondary)] overflow-hidden relative">
+        <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+        <div className="max-w-7xl mx-auto">
+          <h2 className="font-heading text-5xl font-bold text-center mb-20 text-white">Client Reflections</h2>
+          <div className="columns-1 md:columns-2 gap-8 space-y-8">
+            {testimonials.map((t, i) => (
+              <div key={i} 
+                style={{ transitionDelay: `${i * 200}ms` }}
+                className={`break-inside-avoid p-10 bg-white/[0.03] border border-white/5 rounded-3xl transition-all duration-1000 ${testimonialReveal.isVisible ? 'opacity-100 translate-y-0 blur-0' : 'opacity-0 translate-y-10 blur-sm'}`}>
+                <p className="text-white/70 text-2xl font-serif italic leading-relaxed mb-8">
+                  &ldquo;{t.text}&rdquo;
+                </p>
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 bg-[var(--primary)] rounded-full flex items-center justify-center text-black font-black text-xl">
+                    {t.name.charAt(0)}
+                  </div>
+                  <div>
+                    <p className="font-bold text-white text-lg">{t.name}</p>
+                    <p className="text-white/40 text-sm tracking-widest uppercase">{t.role}</p>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* --- CONTACT (C2 Variant) --- */}
+      <section id="contact" ref={contactReveal.ref} className="relative min-h-[80vh] flex items-center overflow-hidden">
+        <div className="absolute inset-0 bg-[var(--primary)]" />
+        <div className="absolute inset-0 bg-[var(--secondary)] [clip-path:polygon(0_0,65%_0,45%_100%,0_100%)] hidden md:block" />
+        
+        <div className="relative z-10 max-w-7xl mx-auto px-6 w-full grid md:grid-cols-2 gap-20 py-24 items-center">
+          <div className={`transition-all duration-1000 delay-100 ${contactReveal.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'}`}>
+            <h2 className="font-heading text-7xl md:text-8xl font-bold text-white leading-none mb-8">Start Your <br/> Custom Build</h2>
+            <p className="text-white/60 text-xl max-w-sm mb-12">
+              Transform your living space with a piece that is uniquely yours. Let's discuss your commission today.
+            </p>
+            <div className="flex flex-col gap-6">
+              <a href="https://instagram.com/andin_furniture" className="flex items-center gap-4 text-white/80 hover:text-white transition-colors group">
+                <Instagram size={24} className="group-hover:text-[var(--primary)] transition-colors" />
+                <span className="font-mono text-lg">@andin_furniture</span>
+              </a>
+              <div className="flex items-center gap-4 text-white/80">
+                <MapPin size={24} className="text-[var(--primary)]" />
+                <span className="font-mono text-lg">Lagos, Nigeria</span>
+              </div>
+            </div>
+          </div>
+
+          <div className={`w-full max-w-md ml-auto transition-all duration-1000 delay-300 ${contactReveal.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'}`}>
+            {sent ? (
+              <div className="bg-black p-12 rounded-3xl border border-white/10 text-center animate-scaleIn">
+                <div className="w-20 h-20 bg-[var(--primary)] rounded-full flex items-center justify-center mx-auto mb-6">
+                  <CheckCheck size={40} className="text-black" />
+                </div>
+                <h3 className="font-heading text-4xl font-bold text-white mb-4">Inquiry Received</h3>
+                <p className="text-white/50 text-lg">Inneh Samuel will review your commission request and respond shortly.</p>
+              </div>
+            ) : (
+              <form onSubmit={handleSubmit} className="bg-black p-10 rounded-3xl border border-white/10 space-y-4">
+                <h3 className="text-white font-heading text-2xl font-bold mb-6">Commission Form</h3>
+                {['name', 'email', 'phone'].map(field => (
+                  <input key={field} type="text" placeholder={field.charAt(0).toUpperCase() + field.slice(1)} 
+                    className="w-full bg-white/5 border border-white/10 rounded-xl px-6 py-4 text-white placeholder-white/30 outline-none focus:border-[var(--primary)] transition-colors"
+                    onChange={e => setForm(prev => ({ ...prev, [field]: e.target.value }))} required />
+                ))}
+                <textarea placeholder="Tell us about your space and style..." rows={4}
+                  className="w-full bg-white/5 border border-white/10 rounded-xl px-6 py-4 text-white placeholder-white/30 outline-none focus:border-[var(--primary)] transition-colors"
+                  onChange={e => setForm(prev => ({ ...prev, message: e.target.value }))} required />
+                <button type="submit" disabled={loading}
+                  className="w-full bg-[var(--primary)] text-black py-5 rounded-xl font-bold text-lg hover:brightness-110 transition-all flex items-center justify-center gap-3">
+                  {loading ? <Loader2 className="animate-spin" /> : "Request Commission"}
+                </button>
+              </form>
+            )}
+          </div>
+        </div>
+      </section>
+
+      {/* --- FOOTER --- */}
+      <footer className="bg-black py-20 px-6 border-t border-white/5">
+        <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-16">
+          <div className="col-span-1 md:col-span-2">
+            <div className="w-12 h-12 bg-[var(--primary)] flex items-center justify-center font-heading text-3xl font-black text-black mb-8">A</div>
+            <h2 className="font-heading text-3xl font-bold text-white mb-4">Andin Furniture</h2>
+            <p className="text-white/40 max-w-sm text-lg leading-relaxed mb-8">
+              Handcrafting luxury legacy pieces for the discerning elite. Clean luxe aesthetics powered by technical precision.
+            </p>
+            <div className="flex gap-4">
+              <a href="#" className="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center text-white/40 hover:text-[var(--primary)] hover:border-[var(--primary)] transition-all">
+                <Instagram size={18} />
+              </a>
+            </div>
+          </div>
+          <div>
+            <h4 className="font-heading text-xl font-bold text-white mb-8">Quick Links</h4>
+            <div className="space-y-4">
+              {['Home', 'Our Craft', 'Collections', 'Contact'].map(link => (
+                <a key={link} href={`#${link.toLowerCase().replace(' ', '')}`} className="block text-white/40 hover:text-white transition-colors uppercase text-sm tracking-widest">
+                  {link}
+                </a>
+              ))}
+            </div>
+          </div>
+          <div>
+            <h4 className="font-heading text-xl font-bold text-white mb-8">Regional</h4>
+            <p className="text-white/40 text-sm leading-relaxed mb-4">
+              Lagos Office & Studio<br/>
+              Lekki Phase 1, Lagos, Nigeria
+            </p>
+            <p className="text-[var(--primary)] font-mono text-sm uppercase tracking-tighter">
+              Sharp delivery, nationwide.
+            </p>
+          </div>
+        </div>
+        <div className="max-w-7xl mx-auto mt-20 pt-8 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-4 text-white/30 text-xs font-mono uppercase tracking-widest">
+          <p>&copy; {new Date().getFullYear()} Andin Furniture. All rights reserved.</p>
+          <p>Bespoke Artistry • Modern Connoisseur</p>
+        </div>
+      </footer>
     </main>
   );
 }

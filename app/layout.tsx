@@ -1,25 +1,31 @@
-import { Cormorant_Garamond, Inter } from 'next/font/google';
-import './globals.css';
+import type { Metadata } from "next";
+import { Cormorant_Garamond, Inter } from "next/font/google";
+import "./globals.css";
 
-const headingFont = Cormorant_Garamond({ 
-  subsets: ['latin'], 
-  variable: '--font-heading',
-  weight: ['300', '400', '500', '600', '700']
-});
-const bodyFont = Inter({ 
-  subsets: ['latin'], 
-  variable: '--font-body' 
+const heading = Cormorant_Garamond({ 
+  subsets: ["latin"], 
+  weight: ["300", "400", "500", "600", "700"],
+  variable: "--font-heading" 
 });
 
-export const metadata = {
-  title: 'Andin Furniture | The Art of Bespoke Living',
-  description: 'Premium high-end furniture production specializing in custom-made pieces.',
+const body = Inter({ 
+  subsets: ["latin"],
+  variable: "--font-body" 
+});
+
+export const metadata: Metadata = {
+  title: "Andin Furniture | Bespoke Artistry for the Modern Connoisseur",
+  description: "Led by visionary founder Inneh Samuel, Andin Furniture transforms raw materials into legacy pieces for Nigeria's most discerning homes.",
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
     <html lang="en">
-      <body className={`${headingFont.variable} ${bodyFont.variable} font-sans antialiased`}>
+      <body className={`${heading.variable} ${body.variable} font-sans`}>
         {children}
       </body>
     </html>
